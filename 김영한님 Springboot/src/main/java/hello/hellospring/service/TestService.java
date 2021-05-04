@@ -1,11 +1,15 @@
 package hello.hellospring.service;
 
-import hello.hellospring.repository.MemoryTestRepository;
+import hello.hellospring.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class TestService {
-    private final MemoryTestRepository memoryTestRepository;
+    private final MemberRepository memberRepository;
 
-    public TestService(MemoryTestRepository memoryTestRepository) {
-        this.memoryTestRepository = memoryTestRepository;
+    @Autowired
+    public TestService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 }
