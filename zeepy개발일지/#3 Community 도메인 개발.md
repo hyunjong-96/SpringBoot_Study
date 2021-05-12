@@ -312,6 +312,9 @@ public class ErrorResponse {
 
 
 
+**결과**
+![image](https://user-images.githubusercontent.com/57162257/117912285-31259400-b31a-11eb-8614-db977c66edf0.png)
+
 > `ExceptionHandler를 통한 customException구현`
 >
 > https://bamdule.tistory.com/92 (도움 많이됨)
