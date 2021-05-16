@@ -341,6 +341,109 @@ public class ErrorResponse {
 >
 > https://lucaskim.tistory.com/40
 
+--------------------------
+
+# Optional
+
+Optional은 Java 8에 추가된 `null`을 잘 다룰수 있도록 도와주는 class
+
+## NullPointerException
+
+참조를 할때 null인 객체를 참조하려고하면 NullPointerException이라는 예외가 발생하여 실행이 중단되는데 이를 막기위해 try,catch문을 이용해서 null처리를 하여 if문으로 null을 처리하여 가독성을 해칠수 있다.
+
+## Method
+
+예를 들어서 설명하겠다.
+
+### Optional< T > findById
+
+JPA에 존재하는 메소드로 id를 파라미터로 넣으면 Optional로 반환 타입을 한번 감싸서 값을 반환한다.
+
+### orElse(T other)
+
+```java
+//BAD
+Optional<Member> member = ...;
+if (member.isPresent()) {
+    return member.get();
+} else {
+    return null;
+}
+
+//GOOD
+Optional<Member> member = ...;
+return member.orElse(null);
+```
+
+- member를 받아왔고 memeber의 값이 null이라면 null을 반환
+- 그렇지 않다면 null반환
+
+### orElseThrow()
+
+```java
+//BAD
+Optional<Member> member = ...;
+if(member.isPresent()){
+    return member.get();
+}else throw new NoSucheElementException();
+
+//GOOD
+Optional<Member> member = ...;
+return member.orElseThrow(()-> new NoSuchElementException());
+```
+
+- orElse와 비슷하지만 exception을 발생시킬떄 사용한다.(나는 customException을 부를때 사용)
+
+### orElseGet(()->new...)
+
+> orElse(...)에서 ...는 Optional에 값이 있든 없는 무조건 실행된다.
+>
+> ...가 새로운 객체를 생성하거나 연산을 수행하는 경우에는 orElse()대신 orElseGet()을 사용해야한다.
+
+`member.orElse(new makeMember)`라고 한다면 Optional의 member안에 값이 있든 없든 makeMember객체가 생성됬다는 가정하에 실행되기 떄문에 makeMember는 무조건 생성되어 비효율적이다.
+`즉, orElse(...)는 ...가 새 객체 생성이나 새로운 연산을 유발하지 않고 이미 생성되었거나 이미 계산된 값일 때만 사용한다.`
+
+orElseGet(...)에서 ...은 Optional에 값이 없을 때만 실행되기떄문에 불필요한 오버헤드가 없다.
+
+orElse와 orElseGet을 헷갈리지 말자!
+
+
+
+## Optional사용에 주의할점
+
+Optional은 비싸기 떄문에 사용에 주의해야하고 최대한 줄이는 것이 좋다고한다.
+
+### 값을 얻을 목적이면 Optional대신 null비교
+
+```java
+//BAD
+return Optional.ofNullable(status).orElse(READY);
+//ofNullable은 null이 허용되는 Optional로 wrapp
+
+//GOOD
+return status != null ? status : READY;
+```
+
+### Optional대신 비어있는 컬렉션 반환
+
+```java
+//BAD
+List<Member> team.getMembers();
+return Optional.ofNullable(member);
+
+//GOOD
+List<Member> members = tea.getmembers();
+return members != null ? members : Collections.emptyList();
+```
+
+- 컬렉션은 null이 아니라 비어있는 컬렉션을 반환하는 것이 좋을때가 많다.
+- Optional을 감싸서 반환하지 말고 비어있는 컬렉션을 반환하자.
+- 참고로 JPA에서 객체들의 list를 불러올때 값이 없다면 빈 배열을 반환해준다. 이때 List< Member >로 하고, Optional<List< Member >>방법은 추천하지 않는다.
+
+
+
+출처 : http://homoefficio.github.io/2019/10/03/Java-Optional-%EB%B0%94%EB%A5%B4%EA%B2%8C-%EC%93%B0%EA%B8%B0/
+
 -------------------------------------
 
 ## 오류
