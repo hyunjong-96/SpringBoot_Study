@@ -51,6 +51,18 @@ MockBean을 사용하면 구현체가 없어도 테스트가 가능하다(@MockB
 
 https://shinsunyoung.tistory.com/52
 
+
+
+## @MockBean과 @Mock차이
+
+- @Mock
+  - `@RunWith()`을 사용해주면 `@Mock`을 사용해줄수 있는데 @Mock은 실제 의존성이 아닌 껍데기 의존성(SpringBoot를 사용하지 않아도 된다)
+- @MockBean
+  - @MockBean은 `org.springframework.boot.test-mock.mockito`패키지에 존재하는 springboot-test에서 제공하는 어노테이션이다. Mockito의 Mock객체들을 Spring의 ApplicationContext에 넣어주는데 동일한 타입의 Bean일 경우 MockBean으로 변경해준다고 한다.
+- 사용방법
+  - **springboot container**가 필요하고 **Bean이 container에 존재**해야한다면 @MockBean사용
+  - 그렇지 않다면 @Mock
+
 ------------------------
 
 ## BDD
