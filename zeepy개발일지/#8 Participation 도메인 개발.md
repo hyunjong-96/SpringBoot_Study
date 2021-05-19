@@ -1,0 +1,140 @@
+# #4 Participation 도메인 개발
+
+# 다대일 연관관계
+
+```java
+public class Community{
+    @Id
+    private Long id;
+    
+    @OneToMany(mappedBy = "community")
+    private List<Participation> participationsList = new ArrayList<>();
+}
+```
+
+```java
+public class Participation{
+	@Id
+    private Long id;
+    
+    @ManyToOne
+    @JoinColumn(name="community_id")
+    private Community community;
+    
+    public void setCommunity(Community community){
+        if(this.community != null){
+            this.community.getParticipationsList().remove(this);
+        }
+        this.community = community;
+        community.getParticipationsList().add(this);
+    }
+}
+```
+
+### 연관관계를 맺을 때의 주인
+
+- 연관관계의 주인이란 Participation테이블에 있는 community_id외래 키를 관리자를 선택하는 것.
+- 보통 주인은 다 대 일에서 **다**
+- 다 쪽이 주인인 이유는 다인 테이블에 외래키가 존재하는데 일인 테이블이 주인이되면 물리적으로 전혀다른 테이블의 외래 키를 관리해야하기 때문이다.
+-  때문에 주인이 아닌 Community엔티티가 주인이 아니라고 알려줘야 하기 떄문에 `mappedBy`를 사용해주고 mappedBy의 값으로 사용된 community는 연관관계 주인인 **Participation엔티티의 community필드**를 말한다.
+
+### 양방향 연관관계 주의점
+
+```java
+public void test(){
+    Community community = Community.builder().id(1L).build();
+
+	Participation participation = Participation.builder().community(community).build();
+    
+    community.getParticipationsList().size() // 0
+}
+
+```
+
+- community와 participation을 모두 만들어줬지만 community의 participationsList의 길이는 0이다.
+
+- 이렇게 되면 양방향 연관관계가 아닌 그냥 단방향 연관관계가 되는것이다. 그렇기 때문에 community객체의 participationList에도 participation객체를 등록해줘야한다.
+
+- 연관관계의 주인인 Participation엔티티에서 setCommunity메소드를 만들어줘 양방향인 community와 participation을 set해준다.
+
+  ```java
+  public void setCommunity(Community community){
+      if(this.community != null){
+          this.community.getParticipationsList().remove(this);
+      }//1
+      this.community = community;//2
+      community.getParticipationsList().add(this);//3
+  }
+  ```
+
+  1. 현재의 participation객체에 이미 등록된 community가 있다면 새로 들어온 community를 등록시켜줘야함으로 등록되어있는 community의 participationsList에 현재 participation객체를 제거해준다.
+
+  2. 현재 participation객체에 새로 들어온 community객체를 등록
+
+  3. 새로 등록된 community객체의 participationsList에 현재 participation객체를 등록해준다.
+
+  이렇게 이미 맺어져 있는 연관관계의 유무와 처리, 그리고 양방향 등록까지 해주는 set메소드를 `연관관계 편의 메서드` 라고 한다.
+
+https://velog.io/@conatuseus/%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84-%EB%A7%A4%ED%95%91-%EA%B8%B0%EC%B4%88-2-%EC%96%91%EB%B0%A9%ED%96%A5-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84%EC%99%80-%EC%97%B0%EA%B4%80%EA%B4%80%EA%B3%84%EC%9D%98-%EC%A3%BC%EC%9D%B8
+
+-------------------------------------------------
+
+# 양방향 JPA Entity
+
+위의 예제에서 participation과 Community는 다대일 양방향 연관관계이다(게다가 예제에는 없지만 Participation은 User까지 양방향이다.`즉, community와 user는 다대다 관계이다`). 이 관계를 JPA를 통해 데이터를 가져오려고하면 재귀로 인해 무한루프가 걸리게 되고 JSON으로 시리얼라이즈하는 순간 스택오버플로우가 발생한다. 
+
+처음에는 이렇게 무한 루프가 걸리게되면 DB에 무리가 가지 않을까 생각했지만 sql문을 확인해보니 join을 이용해서 한눈에 봤을떄는 트래픽이 심해보이는 느낌은 받지 못했다. 게다가 김영한님께서는 많은양의 돈이 왔다갔다하는 로직이나 무거운 로직에도 JPA를 그대로 사용해도 문제가 없었다고 하셨다.
+
+그렇담 이 무한루프가 걸린 Entity를 JSON으로 보내기 위해선 어떻게해야할까? 
+
+바로 DTO를 사용하는 방법이다. 
+
+```java
+@Getter
+@NoArgsConstructor
+public class ParticipationResDto {
+    private Long id;
+    private CommunityCategory communityCategory;
+    private String title;
+    private String content;
+
+    @Builder
+    public ParticipationResDto(Participation participation) {
+        this.id = participation.getCommunity().getId();
+        this.communityCategory = participation.getCommunity().getCommunityCategory();
+        this.title = participation.getCommunity().getTitle();
+        this.content = participation.getCommunity().getContent();
+    }
+}
+```
+
+- findAllByUserId()를 이용해서 엔티티를 불러왔고 이 엔티티를 ParticipationResDto에 넣어줘서 필요한 필드값만 저장한다
+- 깔끔
+
+https://ict-nroo.tistory.com/122
+
+------------------------------------------
+
+# PathVariable Vs QueryParam
+
+## @PathVariable
+
+`localhost:8080/api/test/{id}`
+
+보통 pathvarialbe은 값을 호출할때 주로 많이 사용
+
+## @QueryParam
+
+`localhost:8080/api/test?id=1&page=2`
+
+보통 queryparam은 페이지 및 검색 정보를 함꼐 전달하는 방식을 사용할 때 많이 사용.
+
+https://www.baeldung.com/spring-requestparam-vs-pathvariable
+
+https://elfinlas.github.io/2018/02/18/spring-parameter/
+
+## MockMvc의 param
+
+controller테스트를 할때 mockMvc의 params을 사용할때가 있는데 PathVariable로 받는 값은 pathUrl에 직접넣어주고 RequestParam에서 받는 값을 받을때 `MultiValueMapping<String,String> params = new LinkedMultiValueMap<>()`로 wrapper해준 다음 사용해주면 된다.
+
+---------------------------------------------------------
