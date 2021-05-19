@@ -66,6 +66,83 @@ controller로직에선 serivce로직을 테스트하지말아야하고 service�
 
 직접적인 영향을 주지는 않지만 `@MockBean`으로 선언된 service의 함수의 결과값을 예상하여 `mockMvc.perform()`의 결과값에 반영이된다.
 
+## controllerTest
+
+```java
+//given
+given(communityService.save(any(SaveDto.class))).willReturn(1L);
+
+//when
+Long saveId = communityService.save(requestDto);
+
+//then
+assertThat~;
+doPost(url, request);
+
+
+```
+
+- given
+  BDD의 mockito.given메소드를 사용하여 mockito.given메소드를 사용하여 Service로직의 반환을 예상한다.
+
+- when
+
+  - assertThat을 사용하여 값을 비교할때는 @InjectMocks로 Mock설정된 service로 값을 반환받아온다
+  - 이떄의 값은 given에서 예상반환된 값이 들어오게된다.
+
+- then
+
+  - assertThat을 사용해 service로직에 반환된 값들을 비교한다
+
+  - 또는 mockMvc.perform을 통해 httpMethod로 controller를 테스트한다.
+
+    ```java
+    protected <T> ResultActions doPost(String path, T request) throws Exception {
+            return mockMvc.perform(post(path)
+                    .content(objectMapper.writeValueAsBytes(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isCreated())
+                    .andExpect(header().string(HttpHeaders.LOCATION, path + "/1"))
+                    .andDo(MockMvcResultHandlers.print());
+        }
+    ```
+
+    
+
+## servierTest
+
+```java
+//given
+long communityId = 1L;
+        JoinCommunityRequestDto requestDto = new JoinCommunityRequestDto(null, 2L);
+
+        Community community = createCommunity();
+        User user = createJoinUser();
+        Participation participation = createParticipation(community, user);
+
+        when(communityRepository.findById(any(Long.class))).thenReturn(Optional.of(community));
+        when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
+        when(participationRepository.save(any(Participation.class))).thenReturn(participation);
+        when(participationRepository.findById(any(Long.class))).thenReturn(Optional.of(participation));
+
+//when
+Long participationId = communityService.joinCommunity(communityId, requestDto);
+
+//then
+Participation newParticipation = participationRepository.findById(participationId).orElseThrow(NotFoundParticipationException::new);
+
+        assertThat(newParticipation.getCommunity().getId()).isEqualTo(community.getId());
+        assertThat(newParticipation.getUser().getId()).isEqualTo(user.getId());
+```
+
+- given
+  - communityService에서 사용될 repository를 통한 결과값들을 Mockito.when을 통해 예상해서 thenReturn으로 넣어준다.
+- when
+  - Mock으로 설정된 communitytService를 실행시킨다.
+- then
+  - participationRepository에서 가져온 값을 가지고 communityService로직의 결과물과 assertThat을 이용해 비교한다.
+
 ----------------------------------
 
 ## MultiValueMap<String,String> params
