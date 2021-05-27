@@ -94,10 +94,24 @@ public void setCommunity(Community community) {
 
 -----------------------------------------------------------
 
-## 3. stream().filter(v->{})
+## 3. stream()
+
+### filter
 
 위의 내용에서 findById()를 통해서 저장된 community를 가져올때는 이미 대댓글comment도 comments에 추가되어서 같이 딸려오게 된다. 이를 막기 위해선 comments가 List<>임을 이용한다.
 
 stream()을 이용해서 `filter(v-> v.getSuperComment() == null)`인 comment만 필터링 해서 dto에 담는것이다.
 
-참고로 superComment가 null인것이 댓글 객체가 존재하는것이 대댓글이다.
+참고로 superComment가 null인것이 댓글 객체가 존재하는것이 대댓글이다
+
+
+
+### sorted
+
+List타입을 정렬할때 사용해줌
+
+
+
+### map
+
+List타입안에 있는 객체 하나하나를 다른 객체로 묶어주거나 set해줄때 사용.
