@@ -138,3 +138,27 @@ https://elfinlas.github.io/2018/02/18/spring-parameter/
 controller테스트를 할때 mockMvc의 params을 사용할때가 있는데 PathVariable로 받는 값은 pathUrl에 직접넣어주고 RequestParam에서 받는 값을 받을때 `MultiValueMapping<String,String> params = new LinkedMultiValueMap<>()`로 wrapper해준 다음 사용해주면 된다.
 
 ---------------------------------------------------------
+
+# Delete
+
+객체에서 양방향인것처럼 보이게 하기 위해서는 set메소드를 만들어서 양방향인것처럼 만들어줘야한다.
+
+반면 관계형 데이터베이스는 외래 키 하나로 문제를 단순하게 해결할수있다.
+
+김영한님께서 말씀하시길, `객체에서 양방향 연관관계를 사용하려면 로직을 견고하게 작성해야한다.`라고 하셨다.
+
+특시 객체의 양방향 관계가 제거되지 않아도 데이터베이스 외래 키를 변경하는 데는 문제가 없다. 왜냐면 연관관계의 주인이 아닌 엔티티에서 주인을 참조하는 필드(거의 List< T >일것이다.)는 아니라서 데이터베이스에 전혀 영향을 미치지 않는다.
+
+결국 양방향 연관관계를 사용할때 삭제를 해줘야한다면 양측 객체의 필드에 있는 요소들을 삭제해주는것이 맞다. 하지만 그저 삭제만의 기능을 사용하고 삭제 외에는 다른 기능을 사용하지 않는다면 굳이 편의메소드를 만들어줄필요는 없다고 생각된다.
+
+## controllertest
+
+보통 delete기능을 구현할때는 service layer에서는 void타입을 반환해준다. 그렇기에 mockito의 기능을 평범하게 사용하는데 제약이 따른다.(특정 타입을 반환해주라고 에러발생함) 그렇기 때문에 mockito에 아무것도 반환되지않는다고 알려줘야한다.
+
+```java
+doNothing().when(communityService).cancelJoinCommunity(id,reqdto);
+```
+
+위의 코드처럼 doNothing()이라는 메소드를 통해 아무것도 반환되지 않는다고 알려준다.
+
+`MockBean인 commnunityService는 모르는걸 시키면 아무것도 하지않는다. 그렇기 떄문에 doNothing()를 잘 알아주자`
