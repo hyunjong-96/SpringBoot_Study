@@ -147,6 +147,66 @@ Service -> Repository로직에서 DTO하나 이렇게 총 두개의 DTO를 사�
 
 - 보통 엔티티를 업데이트 할떄는 해당 엔티티의 필드값을 변경해서 수정하는 **더티체킹**을 사용하는데 `EntityManager`에는 update라는 메소드가 없다. 결국엔 더티체킹을 해야하는 건데, 더티체킹을 한다고 해서 @PreUpdate가 발생하지는 않았다. 언제 <u>@PreUpdate가 발생하는지 찾이 못함..</u> 
 
+### @PreUpdate는 왜 동작하지 않는가?
+
+```java
+@Transactional
+public void Test(){
+    User writer = User.builder().id(1L).name("작성자").build();
+        User user1 = User.builder().id(2L).name("참여자1").build();
+        User user2 = User.builder().id(3L).name("참여자2").build();
+        userRepository.save(writer);
+        userRepository.save(user1);
+        userRepository.save(user2);
+
+        Community community = jointpurchaseEntity(writer);
+        Community community2 = freesharingEntity(writer);
+        Community saveCommunity = communityRepository.save(community); //1
+        Community saveCommunity2 = communityRepository.save(community2); //2
+
+        saveCommunity.setCurrentNumberOfPeople();
+        communityRepository.saveAndFlush(saveCommunity); //3
+        saveCommunity.setCurrentNumberOfPeople();
+        communityRepository.saveAndFlush(saveCommunity); //4
+
+        assertThat(saveCommunity.getCurrentNumberOfPeople()).isEqualTo(1);
+        assertThat(saveCommunity.getCurrentNumberOfPeople()).isEqualTo(2);
+}
+```
+
+```java
+@Entity
+public class Community{
+    @PrePersist
+    public void persisTest(){
+       System.out.print("PrePersist!!!!");
+        System.out.print(id);
+    }
+
+    @PreUpdate
+    public void preUpdateTest(){
+        System.out.print("PreUpdate!!!");
+        System.out.print(id);
+    }
+}
+```
+
+1. 
+2. 23
+3. asd
+4. asd
+
+`flush` : 영속성 컨텍스트의 변경 내용을 DB에 반영하는 것(Transaction commit이 일어날때 flush가 발생해서, 쓰기 지연 저장소에 쌓아놨던 SQL문들이 DB에 날아간다)
+
+`flush동작과정`
+
+- 변경감지(dirty checking)
+- 수정된 entity를 쓰기 지연 SQL저장소에 등록
+- 쓰기지연 SQL저장소의 Query를 DB에 전송
+- flush가 동작할수 있는 이유는 데이터베이스 트랜잭션(작업 단위)라는 개념떄문이다,  트랜잭션이 시작 되고 해당 트랜잭션이 commit되는 시점 직전에만 동기화 해주면 되기때문에 플러시 메커니즘의 동작이 가능한것이다.
+
+`saveAndFlush()` : db에 바로 업데이트를 하는것이 아닌 쓰기 지연 SQL저장소로 update Query를 flush하는것 
+
 그외
 
 - @PostLoad : 해당 엔티티를 새로 불러오거나 refresh한 경우
