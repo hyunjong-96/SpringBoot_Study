@@ -191,10 +191,13 @@ public class Community{
 }
 ```
 
-1. 
-2. 23
-3. asd
-4. asd
+1. `insert`를 통해 community를 저장
+   ![image](https://user-images.githubusercontent.com/57162257/120146357-e9f73880-c21f-11eb-9665-490da91a2ff2.png)
+2. `insert`를 통해 community2를 저장
+   ![image](https://user-images.githubusercontent.com/57162257/120146394-fa0f1800-c21f-11eb-9a13-79452e0ac868.png)
+3. currentNumberOfPeople이 변경된 community가 `update`쿼리를 바로 데이터베이스에 전달
+   ![image-20210531145448142](C:\Users\leehyunjong\AppData\Roaming\Typora\typora-user-images\image-20210531145448142.png)
+4. 에러가 발생해서 실행되지 않음
 
 `flush` : 영속성 컨텍스트의 변경 내용을 DB에 반영하는 것(Transaction commit이 일어날때 flush가 발생해서, 쓰기 지연 저장소에 쌓아놨던 SQL문들이 DB에 날아간다)
 
