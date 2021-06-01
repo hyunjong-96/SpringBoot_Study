@@ -215,6 +215,10 @@ public class Community{
 - @PostLoad : 해당 엔티티를 새로 불러오거나 refresh한 경우
 - @PreRemove : 해당 엔티티를 삭제하기 이전
 
+각 영속성 관련 어노테이션 실행 위치 : https://pumpkineaterdotorg.files.wordpress.com/2013/08/lifeent30-e1375858118520.gif
+
+save 와 saveflush차이 : https://happyer16.tistory.com/entry/Spring-jpa-save-saveAndFlush-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%95%8C%EA%B3%A0-%EC%93%B0%EA%B8%B0
+
 --------------------------
 
 # org.hibernate.LazyInitializationException

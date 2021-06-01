@@ -162,3 +162,62 @@ doNothing().when(communityService).cancelJoinCommunity(id,reqdto);
 위의 코드처럼 doNothing()이라는 메소드를 통해 아무것도 반환되지 않는다고 알려준다.
 
 `MockBean인 commnunityService는 모르는걸 시키면 아무것도 하지않는다. 그렇기 떄문에 doNothing()를 잘 알아주자`
+
+
+
+# RunWith vs ExtendWith
+
+CommunityServiceTest를 하면서 Mock과 TDD를 이용해서 참여하기 service로직을 테스트 해보려고 했는데 service로직에서 findById()에서 exception이 발생했다. 분명 TDD의 when()을 이용해서 가정해서 값을 올바르게 넣어줬는데도 null로 인해 exception이 발생했다. 
+
+구글링을 통해서 serviceTest를 돌리는데 `RunWith(MockitoJUnitRunner.class)`를 이용해서 돌리는 코드가 있길래 돌려보니 정상적으로 돌아갔다... 
+
+이유는 Junit이 4로 설정되어있었기 때문.. 해결..
+
+서비스테스트 코드
+
+## RunWith(MockitoJUnitRunner.class)
+
+- Mockito의 Mock객체를 사용하기 위한 어노테이션
+- JUnit4에서 사용
+
+## ExtendWith(MockitoExtension.class)
+
+- 똑같이 Mockito의 Mock객체를 사용하기 위한 어노테이션
+- JUnit5에서 사용
+
+RunWith과 ExtendWith의 차이 : https://www.baeldung.com/junit-5-runwith
+
+## @Mock
+
+- 의존성을 주입하는 방법
+- mock객체를 생성
+- mock객체란 의존성을 주입해주지만 말 그대로 '**가짜**'객체를 생성하는 것이기 떄문에 Mock을 주입한 객체는 '**가정**'만 가능하며 실제 로직을 흐르게 할수 없다.
+
+## @InjectMocks
+
+- 생성한 Mock객체를 주입하여 사용할 수 있도록 만든 객체
+
+- 쉽게 말하면 **@InjectMocks에서 사용하는 객체를 @Mock으로 만들어 가져다 붙이는 것.**
+
+- 예를 들면 
+
+  ```java
+  @RunWith(MiockitoRunner.class)
+  public class CommunityServiceTest{
+      @InjectMocks
+      private CommunityService communityservice;
+      @Mock
+      private CommunityRepository communityReposiotry;
+      
+      ...
+  }
+  ```
+
+  - CommunityRepository는 Mocking의 대상
+  - 이러한 Mock객체를 주입당하는 Service가 CommunityService이다.
+
+
+
+테스트코드에서 의존성 주입방법 : https://sanghye.tistory.com/24
+
+TDD : https://sanghye.tistory.com/11 (진짜 정리잘된 블로그!!)
