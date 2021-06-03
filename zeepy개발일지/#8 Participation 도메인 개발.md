@@ -221,3 +221,97 @@ RunWith과 ExtendWith의 차이 : https://www.baeldung.com/junit-5-runwith
 테스트코드에서 의존성 주입방법 : https://sanghye.tistory.com/24
 
 TDD : https://sanghye.tistory.com/11 (진짜 정리잘된 블로그!!)
+
+
+
+# 테스트코드 작성시 예외발생 잡기
+
+테스트 중 특정 Exception이 발생하는지 확인할때 필요하다.
+
+## assertThatThrownBy
+
+```java
+@Test
+public void test(){
+    assertThatThrownBy(saveCommunity::setCurrentNumberOfPeople).isInstanceOf(OverflowAchievementRateException.class);
+}
+```
+
+- community의 `setCurrentNUmberOfPeople`메소드를 실행시 `OverflowAchevementRateException` 예외가 발생하는지 테스트해보고 싶었다.
+- `assertThatThrownBy`를 통해 해당 메소드가 실행되면 예외가 발생하고 어떤 예외가 발생하는지 `isInstanceOf()`로 잡아주면 된다
+
+## @Test(expected = OverflowAchevementRateException.class)
+
+```java
+@Test(expected = OverflowAchevementRateException.class)
+public void test(){
+    ...
+    fail("여기까지 오면 실패~")
+}
+```
+
+- Test에 있는 expected속성을 이용해서 테스트 도중 발생하는 exception을 잡아서 테스트 해볼수 있다.
+- 원하는 클래스타입의 exception이 발생하면 성공이다.
+
+## assertThatExceptionOfType
+
+```java
+@Test
+public void test(){
+  assertThatExceptionOfType(OverflowAchievementRateException.class).isThrownBy(saveCommunity::setCurrentNumberOfPeople);
+    ...
+}
+```
+
+- assertThatThrownBy()메소드와 비슷한 예외처리 비교 테스트 메소드다.
+- 내가 봤을땐 이게 `assertThatThrownBy`보단 `assertTHatExceptionOfType`이 가독성이 좋아보이긴 하다.
+
+Junit5의 TDD관련 포스트 : https://naheenosaur.github.io/junit5
+
+# @MappedSuperclass
+
+작곰이가 만든 코드중에서 모든 엔티티에 BastTimeEntity라는 추상 클래스를 만들어놨다. 처음에 사용안하다보니 새 엔티티가 생성되었을때 생성시간이 필요했다.
+
+```java
+@Getter
+@MappedSuperclass
+public abstract class BaseTimeEntity {
+    @CreatedDate
+    private final LocalDateTime createdDate = LocalDateTime.now();
+}
+```
+
+## @MapperSuperclass
+
+- 객체의 입장에서 공통 매핑 정보가 필요할때 사용하는 어노테이션
+- 브모 클래스에 선언하고 속성만 상속 받아서 사용하고 싶을때 사용
+- DB테이블에는 상관없이 단지 객체의 입장에서만 사용한다.
+  ![image](https://user-images.githubusercontent.com/57162257/120642981-86d00500-c4b0-11eb-93e2-7f25f3f3662d.png)
+- 위의 코드처럼 `createdDate`필드는 모든 엔티티에 포함되는 공통된 필드이며 `BaseTimeEntity 클래스`를 상속만 받아주면 상속받은 자식 클래스 엔티티에 `createdDate`필드가 자동 포함된다.
+- 단 `LocalDate.now()`를 `createdDate`필드에 넣어주지 않으면 null값만 들어간다 ㅋㅅㅋ(다른거 사용해도 됨)
+- **직접 생성해서 사용할 일이 없으므로 추상 클래스로 만드는 것을 권장**
+- **JPA에서 @Entity클래스는 `@Entity`나 `@MappedSuperclass`로 지정한 클래스만 상속할 수 있다.**
+
+# Interface
+
+- 모듈을 **모두 공통적으로 규격(동일한 기능 보장)**에 맞는 모듈로 개발하기 위함(**유지보수**)
+
+- **상수** (`타입 상수명`) : **절대적**(바꿀수 없음, 손댈수 없음)
+- **추상메소드** (`변환타입 메소드명(매개변수)`) : **강제적**(상속받으면 무조건 Override 해야함)
+- **디폴트 메소드** (`default 타입 메소드명(매개변수)`) : **선택적**(Override가 강제적이지 않음)
+- **정적 메소드** (`static 타입 메소드명(매개변수)`) : **강제적**(바꿀수 없음, 손댈수 없음)
+
+https://limkydev.tistory.com/197?category=957527https://limkydev.tistory.com/197?category=957527
+
+너무너무 설명을 잘해주셨다..
+
+# Abstract
+
+- 추상 클래스는 객체를 생설할수 없다.(구체적이지 않기 때문, 추상적이기 떄문)
+- **공통된 필드와 메서드를 통일할 목적으로 사용**
+- **추상 메서드**(`접근타입 abstract 타입 메소드명(매개변수)`) : **강제적**(반드시 Override해줘야한다)
+- 추상 클래스에 상속된 자식클래스는 **부모클래스에 자식클래스 인스턴스를 주입하면 해당 추상클래스 변수는 자동 타입변환을 발생시켜 실체클래스 인스턴스처럼 사용**할수있다.(**타입의 다형성**)
+
+https://limkydev.tistory.com/188?category=957527
+
+너무너무 설명을 잘해주셨다..22
