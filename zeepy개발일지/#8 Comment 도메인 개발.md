@@ -232,3 +232,21 @@ save 와 saveflush차이 : https://happyer16.tistory.com/entry/Spring-jpa-save-s
 > 보통은 트랜잭션 밖에서 엔티티를 조회할때 이런 문제가 발생한다.
 
 라고 했다. 그래서 `@Transactional`을 추가해줘서 해결
+
+
+
+# Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException: ... expected "identifier"; SQL statement:
+
+> ```
+> Caused by: org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "ALTER TABLE ORDER_DETAIL ADD CONSTRAINT FKPLAM7WXC4TJBGEX0XYK8F0QXO FOREIGN KEY (ORDER_ID) REFERENCES ORDER[*] (ORDER_ID) "; expected "identifier"; SQL statement:
+> ```
+
+스프링부트를 실행하니까 `expected "identifier"`어쩌구 저쩌구 하는 에러가 발생했는데
+
+**이유** 
+
+엔티티의 테이블 명 때문이였다. `Like`라는 이름을 썼는데 Like는 SQL의 키워드 중 하나기 때문에 테이블의 이름으로 사용할수 없다는 것이였다.
+
+**해결**
+
+다른 테이블 명을 사용해주면 된다. :)
