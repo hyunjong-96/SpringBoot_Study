@@ -11,6 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 public class RepositoryTest {
@@ -18,6 +20,8 @@ public class RepositoryTest {
     private MemberRepository memberRepository;
     @Autowired
     private TeamRepository teamRepository;
+    @Autowired
+    private MemberRepositorySupport memberRepositorySupport;
 
     @DisplayName("다대일_연결_테스트")
     @Test
@@ -36,5 +40,21 @@ public class RepositoryTest {
         //then
         assertThat(findMember.getTeam().getId()).isEqualTo(team.getId());
         assertThat(findTeam.getMembers().size()).isEqualTo(1);
+    }
+
+    @DisplayName("QueryDsl_Test")
+    @Test
+    public void QueryDslTest(){
+        //given
+        Member member = Member.builder().name("현종").build();
+
+        memberRepository.save(member);
+
+        //when
+        List<Member> members = memberRepositorySupport.getMembersByQueryDsl();
+
+        //then
+        assertThat(members.size()).isEqualTo(1);
+        assertThat(members.get(0).getName()).isEqualTo("현종");
     }
 }

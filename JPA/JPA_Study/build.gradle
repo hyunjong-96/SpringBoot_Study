@@ -22,7 +22,9 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     implementation 'com.querydsl:querydsl-jpa'
+    implementation "com.querydsl:querydsl-apt" // querydsl
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
@@ -32,6 +34,11 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
+test {
+    useJUnitPlatform()
+}
+
+//querydsl 추가 시작
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
@@ -51,6 +58,4 @@ compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
-test {
-    useJUnitPlatform()
-}
+//querydsl 추가 끝
