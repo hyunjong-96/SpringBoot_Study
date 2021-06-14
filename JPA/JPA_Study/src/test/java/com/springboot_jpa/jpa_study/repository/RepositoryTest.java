@@ -1,5 +1,6 @@
 package com.springboot_jpa.jpa_study.repository;
 
+import com.springboot_jpa.jpa_study.config.TestConfig;
 import com.springboot_jpa.jpa_study.domain.Member;
 import com.springboot_jpa.jpa_study.domain.Team;
 import org.junit.jupiter.api.DisplayName;
@@ -7,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,13 +17,16 @@ import java.util.List;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
+@Import(TestConfig.class)
+// @RunWith(SpringRunner.class)
+// @SpringBootTest
 public class RepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
     private TeamRepository teamRepository;
     @Autowired
-    private MemberRepositorySupport memberRepositorySupport;
+    private MemberRepositoryImpl memberRepositoryImpl;
 
     @DisplayName("다대일_연결_테스트")
     @Test
@@ -51,7 +56,8 @@ public class RepositoryTest {
         memberRepository.save(member);
 
         //when
-        List<Member> members = memberRepositorySupport.getMembersByQueryDsl();
+        List<Member> members = memberRepository.getMembersByQueryDsl();
+        // List<Member> members = memberRepository.findAll();
 
         //then
         assertThat(members.size()).isEqualTo(1);

@@ -24,7 +24,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
 
     implementation 'com.querydsl:querydsl-jpa'
-    implementation "com.querydsl:querydsl-apt" // querydsl
+    implementation "com.querydsl:querydsl-apt"
+    implementation 'junit:junit:4.13.1'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
@@ -42,6 +43,7 @@ test {
 def querydslDir = "$buildDir/generated/querydsl"
 
 querydsl {
+    library = "com.querydsl:querydsl-apt:4.2.1"
     jpa = true
     querydslSourcesDir = querydslDir
 }
