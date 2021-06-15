@@ -1,5 +1,8 @@
 package com.security.springbootsecurityjwt.dto;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.security.springbootsecurityjwt.domain.User;
 
 import lombok.Builder;
@@ -24,7 +27,7 @@ public class RegistrationReqDto {
 		return User.builder()
 			.name(name)
 			.email(email)
-			.password(password)
+			.password(new BCryptPasswordEncoder().encode(password))
 			.build();
 	}
 }

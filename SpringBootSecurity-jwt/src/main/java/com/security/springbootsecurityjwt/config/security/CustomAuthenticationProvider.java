@@ -21,7 +21,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
 	@Override
 	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		final String email = authentication.getName();	//인증용 객체에서 아이디
+		final String email = authentication.getPrincipal().toString();	//인증용 객체에서 아이디
 		final String password = authentication.getCredentials().toString(); //인증용 객체에서 비밀번호
 
 		UserDetails loadedUser = customDetailsService.loadUserByUsername(email);	//userDetailsService인터페이스를 구현한 customUserDetailsService로 부터 아이디를 통해 DB에서 정보를 가져옴
