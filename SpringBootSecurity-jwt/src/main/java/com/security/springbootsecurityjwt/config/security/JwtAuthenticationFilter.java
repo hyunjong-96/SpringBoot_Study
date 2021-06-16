@@ -12,12 +12,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
 
-public class JwtAuthenticationFilter extends GenericFilterBean {
-	private JwtTokenProvider jwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 
-	public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider){
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends GenericFilterBean {
+	private final JwtTokenProvider jwtTokenProvider;
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
