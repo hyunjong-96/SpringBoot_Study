@@ -24,11 +24,13 @@ public class UserService {
 	}
 
 	public String login(LoginReqDto loginReqDto) {
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		User user = userRepository.findByEmail(loginReqDto.getEmail())
 			.orElseThrow(()-> new NotFoundUser("가입되지 않은 이메일입니다"));
 		if(!passwordEncoder.matches(loginReqDto.getPassword(), user.getPassword())){
 			throw new IllegalStateException("잘못된 비밀번호");
 		}
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
 		return jwtTokenProvider.createToken(user.getEmail());
 	}
 }
