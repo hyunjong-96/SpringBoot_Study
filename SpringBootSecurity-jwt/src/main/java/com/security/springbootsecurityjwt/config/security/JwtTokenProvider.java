@@ -8,12 +8,15 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 
+import com.security.springbootsecurityjwt.common.customException.NotFoundUser;
+import com.security.springbootsecurityjwt.common.customException.utils.JwtUtil;
 import com.security.springbootsecurityjwt.service.CustomDetailsService;
 
 import io.jsonwebtoken.Claims;
@@ -26,10 +29,9 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class JwtTokenProvider {
 	private String secretKey = "apple";
-	private final long tokenValidTime = 1000L * 60 *60 * 10;//10시간
+	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000L * 1;//30분
+	private final long REFRESH_TOKEN_EXPIRE_TIME = 1000L * 60 * 60 * 7;//7일
 
-	@Autowired
-	private UserDetailsService userDetailsService;
 	@Autowired
 	private CustomDetailsService customDetailsService;
 
@@ -45,14 +47,14 @@ public class JwtTokenProvider {
 		return Jwts.builder()
 			.setClaims(claims)
 			.setIssuedAt(now)
-			.setExpiration(new Date(now.getTime() + tokenValidTime))
+			.setExpiration(new Date(now.getTime() + ACCESS_TOKEN_EXPIRE_TIME))
 			.signWith(SignatureAlgorithm.HS256,secretKey)
 			.compact();
 	}
 
-	public Authentication getAuthentication(String token){
+	public Authentication getAuthentication(String username){
 		System.out.println("44444444444444444444444");
-		UserDetails userDetails = customDetailsService.loadUserByUsername(this.getUserPk(token));
+		UserDetails userDetails = customDetailsService.loadUserByUsername(username);
 		return new UsernamePasswordAuthenticationToken(userDetails,"",userDetails.getAuthorities());
 	}
 
@@ -66,12 +68,17 @@ public class JwtTokenProvider {
 		return request.getHeader("X-AUTH-TOKEN");
 	}
 
+	public String resolveRefreshToken(HttpServletRequest request){
+		return request.getHeader("X-AUTH-REFRESHTOKEN");
+	}
+
 	//토큰의 유효성 + 만료일자 확인
 	public boolean validateToken(String jwtToken){
 		try{
 			Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
 			return !claims.getBody().getExpiration().before(new Date());
 		}catch (Exception e){
+			System.out.println("kkkkkkkkkkkkkkk");
 			return false;
 		}
 	}

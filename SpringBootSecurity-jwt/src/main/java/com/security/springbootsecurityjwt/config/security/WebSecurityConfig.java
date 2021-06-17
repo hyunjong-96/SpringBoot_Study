@@ -19,6 +19,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	private CustomAuthenticationProvider authProvider;
 	@Autowired
 	private JwtTokenProvider jwtTokenProvider;
+	@Autowired
+	private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+	@Autowired
+	private CustomAccessDeniedHandler customAccessDeniedHandler;
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception{
@@ -43,14 +47,18 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http
 			.httpBasic().disable()
 			.csrf().disable()
+			.exceptionHandling()
+			.authenticationEntryPoint(customAuthenticationEntryPoint)//인증실패했을경우
+			.accessDeniedHandler(customAccessDeniedHandler)//접근권한없는 사용자 접근
+			.and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 			.headers().frameOptions().disable()//X-Frame_Options in Spring Secuirty중지
 			.and()
 			.authorizeRequests()
 			.antMatchers("/h2-console/*").permitAll()
-			.antMatchers("/api/user").permitAll()
-			.anyRequest().permitAll()
+			.antMatchers("/api/user/login","/api/user/registration").permitAll()
+			.anyRequest().authenticated()//그 외의 API는 전부 인증이 필요
 			.and()
 			.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),UsernamePasswordAuthenticationFilter.class);
 	}

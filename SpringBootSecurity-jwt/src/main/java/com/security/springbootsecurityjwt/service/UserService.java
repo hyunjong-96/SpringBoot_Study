@@ -1,12 +1,16 @@
 package com.security.springbootsecurityjwt.service;
 
+import org.omg.CosNaming.NamingContextPackage.NotFound;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.security.springbootsecurityjwt.common.customException.NotFoundUser;
 import com.security.springbootsecurityjwt.config.security.JwtTokenProvider;
 import com.security.springbootsecurityjwt.domain.User;
+import com.security.springbootsecurityjwt.dto.GetUserInfoResDto;
 import com.security.springbootsecurityjwt.dto.LoginReqDto;
+import com.security.springbootsecurityjwt.dto.ReIssueReqDto;
 import com.security.springbootsecurityjwt.dto.RegistrationReqDto;
 import com.security.springbootsecurityjwt.repository.UserRepository;
 
@@ -32,5 +36,19 @@ public class UserService {
 		}
 		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
 		return jwtTokenProvider.createToken(user.getEmail());
+	}
+
+	public GetUserInfoResDto getUserInfo(UserDetails userDetails) {
+		System.out.print(userDetails.getUsername());
+		User user = userRepository.findByEmail(userDetails.getUsername()).orElseThrow(()->new NotFoundUser(userDetails.getUsername()+"id를 가진 사용자를 찾을수 없습니다."));
+		return new GetUserInfoResDto(user);
+	}
+
+	public String getNewToken(ReIssueReqDto reIssueReqDto) {
+		//리프레시 토큰 유효성확인
+		//repository에서 refreshToken값 비교
+		//새로운 토큰생성
+		String newToken = jwtTokenProvider.createToken(reIssueReqDto.getAccessToken());
+		return newToken;
 	}
 }
