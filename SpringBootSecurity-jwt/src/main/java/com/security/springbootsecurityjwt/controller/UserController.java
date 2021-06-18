@@ -4,15 +4,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.security.springbootsecurityjwt.domain.User;
 import com.security.springbootsecurityjwt.dto.GetUserInfoResDto;
 import com.security.springbootsecurityjwt.dto.LoginReqDto;
+import com.security.springbootsecurityjwt.dto.TokensResDto;
 import com.security.springbootsecurityjwt.dto.ReIssueReqDto;
 import com.security.springbootsecurityjwt.dto.RegistrationReqDto;
 import com.security.springbootsecurityjwt.service.UserService;
@@ -32,9 +31,9 @@ public class UserController {
 	}
 
 	@PostMapping("/login")//로그인
-	public ResponseEntity<String> login(@RequestBody LoginReqDto loginReqDto){
-		String token = userService.login(loginReqDto);
-		return ResponseEntity.ok().body(token);	//accessToken과 refreshToken을 함꼐 보내줌.
+	public ResponseEntity<TokensResDto> login(@RequestBody LoginReqDto loginReqDto){
+		TokensResDto tokensResDto = userService.login(loginReqDto);
+		return ResponseEntity.ok().body(tokensResDto);	//accessToken과 refreshToken을 함꼐 보내줌.
 	}
 
 	@GetMapping()
@@ -44,8 +43,8 @@ public class UserController {
 	}
 
 	@PostMapping("/reissue")
-	public ResponseEntity<String> reissueToken(@RequestBody ReIssueReqDto reIssueReqDto){
-		String newToken = userService.getNewToken(reIssueReqDto);
-		return ResponseEntity.ok().body(newToken);
+	public ResponseEntity<TokensResDto> reissueToken(@RequestBody ReIssueReqDto reIssueReqDto){
+		TokensResDto tokensResDto = userService.getNewToken(reIssueReqDto);
+		return ResponseEntity.ok().body(tokensResDto);
 	}
 }

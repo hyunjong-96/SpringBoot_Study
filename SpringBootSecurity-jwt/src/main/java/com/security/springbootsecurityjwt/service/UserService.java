@@ -1,6 +1,5 @@
 package com.security.springbootsecurityjwt.service;
 
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,6 +9,7 @@ import com.security.springbootsecurityjwt.config.security.JwtTokenProvider;
 import com.security.springbootsecurityjwt.domain.User;
 import com.security.springbootsecurityjwt.dto.GetUserInfoResDto;
 import com.security.springbootsecurityjwt.dto.LoginReqDto;
+import com.security.springbootsecurityjwt.dto.TokensResDto;
 import com.security.springbootsecurityjwt.dto.ReIssueReqDto;
 import com.security.springbootsecurityjwt.dto.RegistrationReqDto;
 import com.security.springbootsecurityjwt.repository.UserRepository;
@@ -27,7 +27,7 @@ public class UserService {
 		userRepository.save(registrationReqDto.toEntity());
 	}
 
-	public String login(LoginReqDto loginReqDto) {
+	public TokensResDto login(LoginReqDto loginReqDto) {
 		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!");
 		User user = userRepository.findByEmail(loginReqDto.getEmail())
 			.orElseThrow(()-> new NotFoundUser("가입되지 않은 이메일입니다"));
@@ -35,7 +35,9 @@ public class UserService {
 			throw new IllegalStateException("잘못된 비밀번호");
 		}
 		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@");
-		return jwtTokenProvider.createToken(user.getEmail());
+		String accessToken = jwtTokenProvider.createToken(user.getEmail());
+		String refreshToken = jwtTokenProvider.createRefreshToken();
+		return new TokensResDto(accessToken,refreshToken);
 	}
 
 	public GetUserInfoResDto getUserInfo(UserDetails userDetails) {
@@ -44,11 +46,12 @@ public class UserService {
 		return new GetUserInfoResDto(user);
 	}
 
-	public String getNewToken(ReIssueReqDto reIssueReqDto) {
+	public TokensResDto getNewToken(ReIssueReqDto reIssueReqDto) {
 		//리프레시 토큰 유효성확인
 		//repository에서 refreshToken값 비교
 		//새로운 토큰생성
-		String newToken = jwtTokenProvider.createToken(reIssueReqDto.getAccessToken());
-		return newToken;
+		String newAccessToken = jwtTokenProvider.createToken(reIssueReqDto.getAccessToken());
+		String newRefreshToken = jwtTokenProvider.createRefreshToken();
+		return new TokensResDto(newAccessToken,newRefreshToken);
 	}
 }

@@ -52,6 +52,15 @@ public class JwtTokenProvider {
 			.compact();
 	}
 
+	public String createRefreshToken(){
+		Date now = new Date();
+		return Jwts.builder()
+			.setIssuedAt(now)
+			.setExpiration(new Date(now.getTime() + REFRESH_TOKEN_EXPIRE_TIME))
+			.signWith(SignatureAlgorithm.HS256,secretKey)
+			.compact();
+	}
+
 	public Authentication getAuthentication(String username){
 		System.out.println("44444444444444444444444");
 		UserDetails userDetails = customDetailsService.loadUserByUsername(username);
