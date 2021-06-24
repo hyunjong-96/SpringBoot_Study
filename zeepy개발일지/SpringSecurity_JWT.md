@@ -321,3 +321,65 @@ public class UserService {
 1. 로그인을 했을때 토큰이 존재하지 않아 `AuthenticationFilter`를 지나쳤고 사용자 정보 유무를 확인한후 인증 되었다면 `jwtTokenProvider`에서 토큰을 생성해줌.
    그렇다면 다른 요청을 했을때 `X-AUTH-TOKEN`에 로그인 성공후 보내준 토큰을 넣어서 인증을 하면 된다.
 
+# Test
+
+일단 @WebMvcTest와 @SprintBootTest의 차이점 부터 알고가자!
+
+- **@SpringBootTest** : 일반적인 통합테스트(?)를 할때 사용해서 각 계층을 합쳐서 테스트할때 사용한다. 그리고 slicing을 전혀 사용하지 않기 떄문에 전체 응용 프로그램 컨텍스트를 시작한다.
+  그래서 모든 응용 프로그램을 로드하여 모든 Bean을 주입한다.(**느리고 무겁다**)
+- **@WebMvcTest** : Controller계층을 테스트할때 주로 사용하며 모의 객체(Mock)을 사용하기 때문에 필요한 Bean들은 직접 세팅해줘야한다.(**빠르고 가볍다**) 
+
+<u>@WebMvcTest를 이용해 Unit테스트를 할 예정이다.</u>
+
+## SecurityConfig 무시한 테스트
+
+
+
+## SecurityConfig 적용 테스트
+
+@WebMvcTest를 통한 테스트
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(controllers = CommunityController.class)
+@AutoConfigureMockMvc(addFilters = false)
+public class CommunityControllerTest extneds ControllerTest{
+    @MockBean
+    private CommunityService communityService;
+    
+    ...
+}
+```
+
+- `@AutoConfigureMockMvc(addFilters = false)`를 통해 springSecurity인증을 타지 않고 테스트를 진행할수 있다.
+  `@WebMvcTest(controllers = {UserController.class}, secure = false)`이 방법도 있다고 하는데 secure이라는 옵션이 존재하지 않는다고 한다..
+- 
+
+```java
+@WebMvcTest(controllers = {CommunityController.class}, includeFilters = @ComponentScan.Filter(classes = {EnableWebSecurity.class}))
+public class CommunityControllerTest extends ControllerTest{
+    @MockBean
+    private CommunityService communityService;
+    
+	@MockBean
+    JwtAuthenticationProvider jwtAuthenticationProvider;
+    @MockBean
+    CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @MockBean
+    CustomAccessDeniedHandler customAccessDeniedHandler;
+    
+    ...
+        
+	@Test
+	@WithMockUser
+	public void saveTest(){
+        ...
+    }
+}
+```
+
+- `@WebMvcTest(controllers = {CommunityController.class}, includeFilters = @ComponentScan.Filter(classes = {EnableWebSecurity.class}))`이 옵션을 통해 `@EnableWebSecurity`를 선언한 class를 load한다.
+- 그리고 Test에서 사용하고자 할 Config들에 선언된 외부 Bean들을 Test클래스에서  @MockBean으로 선언해 주어야 SecurityConfig를 선언할때 오류가 나지 않는다.
+- Spring Security를 사용할때 검증된 사용자를 받아야 통과가 되는데 `@WithMockUser`를 통해 인증된 가짜 authentication을 사용해서 Filter를 통과하게 된다.
+
+http://blog.devenjoy.com/?p=524
