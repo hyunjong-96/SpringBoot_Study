@@ -262,22 +262,22 @@ public class User implements UserDetails {
 	}
 
 	@Override
-	public boolean isAccountNonExpired() {
+	public boolean isAccountNonExpired() {//2
 		return true;
 	}
 
 	@Override
-	public boolean isAccountNonLocked() {
+	public boolean isAccountNonLocked() {//3
 		return true;
 	}
 
 	@Override
-	public boolean isCredentialsNonExpired() {
+	public boolean isCredentialsNonExpired() {//4
 		return true;
 	}
 
 	@Override
-	public boolean isEnabled() {
+	public boolean isEnabled() {//5
 		return true;
 	}
 }
@@ -286,6 +286,10 @@ public class User implements UserDetails {
 SpringSecurity는 `UserDetails`객체를 통해 권한 정보를 관리하기 때문에 `User`클래스에 `UserDetails`를 구현하고 추가 정보를 재정의 해야한다.
 
 1. getUsername을 통해 SpringSecurity에서 사용하는 username을 가져가는데, 나는 username을 email로 사용했다.
+2. isAccountNotExpired : 계정이 만료되지 않았는지 리턴(true : 만료안됨)
+3. isAccountNoLocked : 계정이 잠겨있지 않았는지 리턴(true : 잠겨있지 않음)
+4. isCredentialNonExpired : 비밀번호가 만료되지 않았는지 리턴(true : 만료안됨)
+5. isEnabled : 계정이 활성화(사용가능)한지 리턴(true : 활성화)
 
 
 
