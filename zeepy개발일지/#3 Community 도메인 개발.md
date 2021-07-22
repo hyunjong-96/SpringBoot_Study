@@ -553,6 +553,8 @@ return members != null ? members : Collections.emptyList();
 
 ## 오류
 
+## 1
+
 > org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class com.kt.isearch.web.model.MainDomain]; nested exception is com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `com.kt.isearch.web.model.MainDomain` (no Creators, like default construct, exist): cannot deserialize from Object value (no delegate- or property-based Creator)
 >
 >  at [Source: (PushbackInputStream); line: 1, column: 2]
@@ -563,7 +565,7 @@ default생성자를 만들기 위해선 `@NoArgsConstructor`을 넣어주면된�
 
 또한 default생성자는 Jackson라이브러리가 사용하기 떄문에 dto에는 deafult생성자를 만들어주는것이 좋다
 
-
+## 2
 
 > #### **Error creating bean with name 'reportController' defined in file [file 주소]**
 >
@@ -574,3 +576,21 @@ default생성자를 만들기 위해선 `@NoArgsConstructor`을 넣어주면된�
 
 
 스프링 컨터이너가 Bean을 등록받지 못했다는 오류
+
+
+
+## 3
+
+> ![image](https://user-images.githubusercontent.com/57162257/126681749-8cc2dc1b-c819-4e26-b6e2-7c58fc78013f.png)
+
+
+
+**org.springframework.web.util.NestedServletException: Request processing failed; nested exception is org.springframework.http.converter.HttpMessageConversionException: Type definition error: [simple type, class org.springframework.security.core.GrantedAuthority]; nested exception is com.fasterxml.jackson.databind.exc.InvalidDefinitionException: Cannot construct instance of `org.springframework.security.core.GrantedAuthority` (no Creators, like default constructor, exist): abstract types either need to be mapped to concrete types, have custom deserializer, or contain additional type information
+ at [Source: (PushbackInputStream); line: 1, column: 520] (through reference chain: com.zeepy.server.community.dto.SaveCommunityRequestDto["user"]->com.zeepy.server.user.domain.User["authorities"]->java.util.Collections$SingletonList[1])**
+
+이유인 즉슨, community.dto.SaveCommunityRequestDto["user"]에서 나타나는 문제로 reqDto에 user엔티티가 존재하게 되면 요청을 json을 java로 받는 jackson이라는 친구가 엔티티를 인식하지 못해 화내는 에러.
+
+![image](https://user-images.githubusercontent.com/57162257/126682469-6a0862b6-8c15-492b-80c9-23dd28c010db.png)
+
+community save 테스트 로직에서 SaveCommunityRequestDto에 user엔티티를 만들어서 req요청을 보내는것을 확인할수 있다. 위에 설명했던대로 json을 java로 받는 jackson이 req요청에 들어있는 user엔티티를 읽지 못해 발생하는 에러로! 반성하자.ㅎ
+
