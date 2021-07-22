@@ -382,4 +382,10 @@ public class CommunityControllerTest extends ControllerTest{
 - 그리고 Test에서 사용하고자 할 Config들에 선언된 외부 Bean들을 Test클래스에서  @MockBean으로 선언해 주어야 SecurityConfig를 선언할때 오류가 나지 않는다.
 - Spring Security를 사용할때 검증된 사용자를 받아야 통과가 되는데 `@WithMockUser`를 통해 인증된 가짜 authentication을 사용해서 Filter를 통과하게 된다.
 
-http://blog.devenjoy.com/?p=524
+Spring Security Test 적용 에러 : http://blog.devenjoy.com/?p=524
+
+Spring Security Test 각종 메소드&어노테이션 
+
+- https://smjeon.dev/etc/with-mock-user/
+- https://woowacourse.github.io/javable/post/2020-09-30-spring-security-test/
+

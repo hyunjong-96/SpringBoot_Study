@@ -315,3 +315,10 @@ https://limkydev.tistory.com/197?category=957527https://limkydev.tistory.com/197
 https://limkydev.tistory.com/188?category=957527
 
 너무너무 설명을 잘해주셨다..22
+
+
+
+# class가 import되지 않음
+
+import가 갑자기 안먹는 이슈가 생기면  왼쪽 상단의 File/Invalid Caches로 캐시 한번 날리고 하면 된다.
+
