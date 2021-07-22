@@ -150,7 +150,9 @@ long communityId = 1L;
         when(communityRepository.findById(any(Long.class))).thenReturn(Optional.of(community));
         when(userRepository.findById(any(Long.class))).thenReturn(Optional.of(user));
         when(participationRepository.save(any(Participation.class))).thenReturn(participation);
-        when(participationRepository.findById(any(Long.class))).thenReturn(Optional.of(participation));
+        when(participationRepository.save(any(Participation.class))).thenReturn(participation);
+		when(participationRepository.findAll()).thenReturn(Collections.singletonList(participation));
+	
 
 //when
 Long participationId = communityService.joinCommunity(communityId, requestDto);
