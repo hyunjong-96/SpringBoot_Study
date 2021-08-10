@@ -322,3 +322,16 @@ https://limkydev.tistory.com/188?category=957527
 
 import가 갑자기 안먹는 이슈가 생기면  왼쪽 상단의 File/Invalid Caches로 캐시 한번 날리고 하면 된다.
 
+```json
+{
+    "addresses" : [
+        {
+            "cityDistinct":"서울특별시 용산구",
+            "primaryAddress" : "기본주소",
+            "detailAddress" : "상ㅅ"
+        }
+    ],
+    "userId" : 1
+}
+```
+
