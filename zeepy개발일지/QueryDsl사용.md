@@ -297,3 +297,14 @@ public class MemberService{
   - 상속 / 구현 없는 Repository
     - 장점 : QueryDsl만으로 Repository를 구현할수있다.(쉽다)
     - 단점 : layer간의 구조적 측면에서 헷갈릴수있다(MemberRepository도 있고, MemberQueryRepository도 있기떄문에)
+
+
+
+참고
+
+- https://www.inflearn.com/questions/23530
+- https://jojoldu.tistory.com/372
+- https://velog.io/@conatuseus/2019-12-06-2212-%EC%9E%91%EC%84%B1%EB%90%A8-1sk3u75zo9
+- https://joont92.github.io/jpa/QueryDSL/
+- https://shinsunyoung.tistory.com/56
+
