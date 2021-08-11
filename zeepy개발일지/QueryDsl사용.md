@@ -117,7 +117,10 @@ gradle설정을 전부 해준다음
 
 `Tasks/other/compileJava`와 `Tasks/other/compileQuerydsl`을 눌러 gradle 빌드를 실행해주면 gradle에 설정해준 경로에 Q클래스가 생성된다
 
+***팁**
+빌드에러가 발생할 경우 `Tasks/build/clean` 후 빌드하면 될꺼다(아마두)
 
+그래도 빌드 에러가 발생할 경우 `File/Settings/Build, Execution, Deployment/ Build Tools/Gradle` 설정에서 `Build and run using : IntelliJ IDEA`로 변경해보자
 
 # 3.  Configuration설정
 
@@ -163,10 +166,13 @@ public interface MemberRepositoryCustom{
 
 ```java
 //MemberRepositoryImpl
-import static com.springboot_jpa.jpa_study.domain.QMember.member;
+import static com.springboot_jpa.jpa_study.domain.QMember.member; //QClass를 main안에 생성하도록 설정하였다면 import가 된다
+//하지만 그렇지 않는 경우에는 class안에 필드값으로 넣어줘야한다.
 
+@Repository
 public class MemberRepositoryImpl implements MemberRepositoryCustom{
     private final JPAQuaryFactory queryFactory;
+    //private final QMember member = QMember.member; //QClass를 가지고 있는 generated를 build파일에 생성하도록 했을경우.
     
     public List<Member> getMembersByQueryDsl(){
         return queryFactory
@@ -250,3 +256,44 @@ public class RepositoryTest {
 
    `@TestConfiguration`을 통해 테스트용으로 빈 등록을 해주고 테스트 클래스에 `@Import(TestConfig.class)`를 import해줘서 @DataJpaTest를 하고자 할때 테스트용 빈을 등록할수 있다.
 
+
+
+# 6. 상속 / 구현 없는 Repository
+
+```java
+@RequiredArgsConstructor
+@Repository
+public class MemberQueryRepository{
+    private final JPAQueryFactory = jpaQueryFactory;
+    
+    public List<Member> findByName(String name){
+        return jpaQueryFactory
+            .selectFrom(member)
+            .where(member.name.eq(name))
+            .fetch();
+    }
+}
+```
+
+
+
+```java
+@RequiredArgsConstructor
+@Service
+public class MemberService{
+    private final MemberRepository memberRepository;
+    private final MemberQueryRepository memberQueryRepository;
+    
+    public List<Member> getUser(String name){
+        return memberQueryRepository.findByName(name);
+    }
+}
+```
+
+- **상속/ 구현의 Repository와 상속 / 구현 없는 Repository의 장단점**
+  - 상속 / 구현 Repository
+    - 장점 : 상속, 구현을 사용한다면 조금더 layer간의 연관관계가 깔끔해진다.
+    - 단점 : 하나의 domain을 구현하는데 필요한 자원이 많이 필요하다.(귀찮다)
+  - 상속 / 구현 없는 Repository
+    - 장점 : QueryDsl만으로 Repository를 구현할수있다.(쉽다)
+    - 단점 : layer간의 구조적 측면에서 헷갈릴수있다(MemberRepository도 있고, MemberQueryRepository도 있기떄문에)
