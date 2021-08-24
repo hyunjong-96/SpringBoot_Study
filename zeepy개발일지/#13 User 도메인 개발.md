@@ -126,3 +126,24 @@ https://kogle.tistory.com/138?category=872749
 
 --------------------------------------------------
 
+## @isEmpty()
+
+클라에서 어떤 필드 값을 받아올때 "", null을 보내줄때가 있었다. 이럴떄 필터링 해줄수 있는 함수인 isEmpty()
+
+```java
+private str1 = "";
+private str2 = null;
+
+if(str1.isEmpty()){System.out.println("empty1")};
+
+if(str2.isEmpty()){Ststem.out.println("empty2")};
+
+if(str1 == null){System.out.println("null1")};
+
+if(str2 == null){System.out.println("null2")};
+
+// empty1
+// null2
+```
+
+즉, String type의 함수인 isEmpty는 length가 0인지 여부를 알려주는 함수이다. 
