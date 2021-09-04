@@ -309,7 +309,7 @@ https://jongmin92.github.io/2019/11/18/Spring/bean-validation-1/
 
 **프로세스**
 
-1. request body를 받는 Dto에서 `@Valid(Bean Validation)`를 받은 필드가 유효성검사에서 실패하면 `MethodArgymentNotValidException`발생
+1. request body를 받는 Dto에서 `@Valid(Bean Validation)`를 받은 필드가 유효성검사에서 실패하면 `MethodArgumentNotValidException`발생
 2. ControllerException클래스의 `@RestControllerAdvice`를 통해 Controller에서 발생하는 Exception을 캐치,
 3. `@ExceptionHandler(MethodArgumentNotValidException.class)`가 선언된 커스텀익셉션할 메소드가 MethodArgumentNotValidException를 받음
 4. Errors를 상속받은 BindingResult를 통해 Bean Validation을 통과하지 못한 필드와 내용들을 필터링해서 커스텀한다.
