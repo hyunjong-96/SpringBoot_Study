@@ -54,3 +54,5 @@
 https://eblo.tistory.com/16
 
 https://stackoverflow.com/questions/4396284/does-spring-transactional-attribute-work-on-a-private-method
+
+https://velog.io/@kdhyo/JavaTransactional-Annotation-%EC%95%8C%EA%B3%A0-%EC%93%B0%EC%9E%90-26her30h
