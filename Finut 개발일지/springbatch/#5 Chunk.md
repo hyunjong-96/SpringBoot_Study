@@ -53,3 +53,5 @@ Chunk Size별로 reader와 processor로 데이터를 가공하고 item을 write�
 ## 참고
 
 https://jojoldu.tistory.com/331?category=902551
+
+https://dahye-jeong.gitbook.io/spring/spring/2021-02-15-spring-boot/2020-03-23-batch/2021-02-09-batch-chunk

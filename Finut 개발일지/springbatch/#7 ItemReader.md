@@ -185,6 +185,8 @@ public class JpaPagingItemReaderJobConfiguration {
 - setName("[itemReader이름]")
   - Bean의 이름이 아닌Spring Batch의 ExecutionContext에 저장되어질 이름
 
+#### *쿼리 문을 작성할때 WHERE(조건문)을 작성하지 않으면 무한으로 불러온다..(아직 해결못함)
+
 밑에 주석처리 해둔것처럼 builder를 이용해 읽을수 있지만 JpaPaginItemReader 객체를 생성해서 사용한 이유는
 
 나중에 process를 통해 데이터를 가공한뒤 write할때 paging을 통해 read하면서 이슈가 생기기 때문이다.
@@ -315,3 +317,13 @@ limit 10000, 10000
    - 굳이 정렬기준을 포함시키지 않는다면 CursorItemReader를 통해 이슈를 해결할수 있다고한다.
 
 난 `order by`를 사용.
+
+
+
+## 참조
+
+https://jojoldu.tistory.com/336?category=902551
+
+https://jojoldu.tistory.com/166
+
+https://jojoldu.tistory.com/146
