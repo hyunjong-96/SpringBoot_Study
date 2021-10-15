@@ -66,12 +66,9 @@ public class CustomItemWriterJobConfiguration {
 
 	@Bean
 	public ItemWriter<Pay2> customItemWriter(){
-		return new ItemWriter<Pay2>(){
-			@Override
-			public void write(List<? extends Pay2> items)throws Exception{
-				for(Pay2 item : items){
-					log.info("customItemWriter item : {}",item);
-				}
+		return items -> {
+			for(Pay2 item : items){
+				log.info("customItemWriter item : {}",item);
 			}
 		};
 	}
