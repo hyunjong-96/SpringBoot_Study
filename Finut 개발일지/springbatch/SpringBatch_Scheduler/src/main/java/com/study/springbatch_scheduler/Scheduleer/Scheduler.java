@@ -22,21 +22,21 @@ public class Scheduler {
 	private final Job job;
 	private final JobLauncher jobLauncher;
 
-	@Scheduled(cron = "*/10 * * * * *")
+	// @Scheduled(cron = "*/10 * * * * *")
 	// @Scheduled(fixedDelay = 5000)
-	@Async
-	public void cronJobScheduler(){
-		try{
-			// JobParameters jobParameters = new JobParametersBuilder()
-			// 	.addLong("time", System.currentTimeMillis())
-			// 		.toJobParameters();
-			//
-			// jobLauncher.run(job, jobParameters);
-			log.info("!!!!! Cron Job Scheduler !!!!!");
-		}catch(Exception e){
-			log.info(e.getMessage());
-		}
-	}
+	// @Async
+	// public void cronJobScheduler(){
+	// 	try{
+	// 		// JobParameters jobParameters = new JobParametersBuilder()
+	// 		// 	.addLong("time", System.currentTimeMillis())
+	// 		// 		.toJobParameters();
+	// 		//
+	// 		// jobLauncher.run(job, jobParameters);
+	// 		log.info("!!!!! Cron Job Scheduler !!!!!");
+	// 	}catch(Exception e){
+	// 		log.info(e.getMessage());
+	// 	}
+	// }
 	// // @Scheduled(cron = "5 * * * * *")
 	// @Scheduled(fixedDelay = 5000)
 	// public void cronJobScheduler() {

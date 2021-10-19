@@ -31,16 +31,18 @@ public class QuartzSchedulingConfiguration {
 	public void start(){
 		log.info("QuartzScheduler start");
 		try{
-			JobDetail jobDetail = buildJobDetail(QuartzTestJob.class, "jobDetailA","5초마다 진행",new HashMap());
-			JobDetail jobDetailStop = buildJobDetail(QuartzStopTestJob.class, "jobDetailB","조건부에 따라 멈춤",new HashMap());
+			// JobDetail jobDetail = buildJobDetail(QuartzTestJob.class, "jobDetailA","5초마다 진행",new HashMap());
+			// JobDetail jobDetailStop = buildJobDetail(QuartzStopTestJob.class, "jobDetailB","조건부에 따라 멈춤",new HashMap());
+			JobDetail jobDetail = buildJobDetail(QuartzBatchJob.class, "quartzBatchJob", "배치 실행 스케줄러", new HashMap());
 
 			//DB에 존재하는 스케줄이라면 삭제
 			validExistJob(jobDetail);
-			validExistJob(jobDetailStop);
+			// validExistJob(jobDetailStop);
 
 			//Job과 Trigger설정
 			scheduler.scheduleJob(jobDetail, buildJobTrigger("0/5 * * * * ?"));
-			scheduler.scheduleJob(jobDetailStop, buildJobTrigger("0/10 * * * * ?"));
+			// scheduler.scheduleJob(jobDetail, buildJobTrigger("0/5 * * * * ?"));
+			// scheduler.scheduleJob(jobDetailStop, buildJobTrigger("0/10 * * * * ?"));
 		}catch(SchedulerException e){
 			e.printStackTrace();
 		}
