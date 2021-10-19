@@ -26,13 +26,13 @@ public class Scheduler {
 	// @Scheduled(fixedDelay = 5000)
 	@Async
 	public void cronJobScheduler(){
-		log.info("!!!!! Cron Job Scheduler !!!!!");
 		try{
-			JobParameters jobParameters = new JobParametersBuilder()
-				.addLong("time", System.currentTimeMillis())
-					.toJobParameters();
-
-			jobLauncher.run(job, jobParameters);
+			// JobParameters jobParameters = new JobParametersBuilder()
+			// 	.addLong("time", System.currentTimeMillis())
+			// 		.toJobParameters();
+			//
+			// jobLauncher.run(job, jobParameters);
+			log.info("!!!!! Cron Job Scheduler !!!!!");
 		}catch(Exception e){
 			log.info(e.getMessage());
 		}

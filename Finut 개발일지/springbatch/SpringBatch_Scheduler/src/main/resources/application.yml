@@ -16,3 +16,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database: mysql
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: always
