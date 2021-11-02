@@ -30,3 +30,7 @@ logging:
           descriptor:
             sql:
               BasicBinder: TRACE
+
+log.log.path : ./logs/info
+log.all.path : ./logs/all
+log.file.name : info.log
