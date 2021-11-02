@@ -14,8 +14,10 @@ public class LogController {
 	@GetMapping()
 	public void logTest(){
 		log.info("로그 발생");
+		log.warn("위험!");
+		log.error("에러발생");
 	}
 
 	@GetMapping("/warn")
-	public void warnTest(){log.error("에러발생");}
+	public void warnTest(){log.warn("위험!");}
 }
