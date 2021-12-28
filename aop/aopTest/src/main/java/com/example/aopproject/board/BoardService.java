@@ -17,4 +17,9 @@ public class BoardService extends SuperPerformance<Board> {
 	public List<Board> findAll() {
 		return boardRepository.findAll();
 	}
+
+	@Override
+	public void update(Board board){
+		boardRepository.save(board);
+	}
 }

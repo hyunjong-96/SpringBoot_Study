@@ -24,12 +24,17 @@ public class UserController {
 
 	@GetMapping
 	public String allUser(){
-		String nameList = userService.allUser();
-		return nameList;
+		return userService.allUser();
 	}
 
 	@GetMapping("/list")
 	public List<User> getUserList(){
 		return userService.getDataAll();
+	}
+
+	@PostMapping("/update")
+	public void updateUser(){
+		List<User> userList = userService.getUserList();
+		userService.update(userList.get(0));
 	}
 }

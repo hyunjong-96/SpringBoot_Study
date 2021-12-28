@@ -22,6 +22,11 @@ public class UserService extends SuperPerformance<User> {
 		return userRepository.findAll();
 	}
 
+	@Override
+	public void update(User user){
+		userRepository.save(user);
+	}
+
 	@LogExecutionTime
 	public void createUser(NewUserDto newUserDto) {
 		User newUser = User.builder()
@@ -31,6 +36,7 @@ public class UserService extends SuperPerformance<User> {
 
 		userRepository.save(newUser);
 	}
+
 	@LogExecutionTime
 	public String allUser(){
 		List<User> userList = userRepository.findAll();
@@ -39,6 +45,10 @@ public class UserService extends SuperPerformance<User> {
 			.collect(Collectors.toList());
 
 		return nameList.toString();
+	}
+
+	public List<User> getUserList(){
+		return userRepository.findAll();
 	}
 
 }

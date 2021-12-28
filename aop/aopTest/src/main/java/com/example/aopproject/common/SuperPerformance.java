@@ -21,4 +21,6 @@ public abstract class SuperPerformance<T> {
 	}
 
 	public abstract List<T> findAll();
+
+	public abstract void update(T object);
 }
