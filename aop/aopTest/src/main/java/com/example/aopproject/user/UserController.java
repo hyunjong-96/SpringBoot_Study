@@ -18,8 +18,7 @@ public class UserController {
 
 	@PostMapping
 	public String newUser(@RequestBody NewUserDto newUserDto){
-		userService.createUser(
-			newUserDto.getName());
+		userService.createUser(newUserDto);
 		return "생성완료";
 	}
 
@@ -27,5 +26,10 @@ public class UserController {
 	public String allUser(){
 		String nameList = userService.allUser();
 		return nameList;
+	}
+
+	@GetMapping("/list")
+	public List<User> getUserList(){
+		return userService.getDataAll();
 	}
 }

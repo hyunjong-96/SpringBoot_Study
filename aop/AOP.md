@@ -17,13 +17,20 @@ AOP는 Aspect Oriented Programming의 약자로 `관점지향프로그램`이라
 
 [출처]https://engkimbs.tistory.com/746?category=767795
 
-AOP에서 모듈화 한다는 것은 공통적으로 사용되는 코드들을 부분적으로 나누어서 관리하겠다는 것이다. 위의 그림에서와 같이 각 클래스에서 공통적으로 사용되는 A,B,C 코드들을 AspectX, Y, Z 로 모듈화해서 관리를 한다. 예를 들어 노란색, 파란색, 빨간색 코드들은 중복적으로 사용되어 따로 분리해서 사용하게 되는데 AOP에서 말하는 'aspect'라고 할수 있다.
+AOP에서 모듈화 한다는 것은 공통적으로 사용되는 코드들을 부분적으로 나누어서 관리하겠다는 것이다. 위의 그림에서와 같이 각 클래스에서 공통적으로 사용되는 A,B,C 코드들을 AspectX, Y, Z 로 모듈화해서 관리를 한다. 예를 들어 노란색, 파란색, 빨간색 코드들은 중복적으로 사용되어 따로 분리해서 사용하게 되는데 AOP에서 말하는 'aspect'라고 할수 있고, 공통된 부분을 잘라냈다고 하여 **크로스 컷팅(Cross-Cutting)**이라고도 한다.
 
 이렇게 모듈화를 해준다면 하나의 코드에서 수정이 일어나게 된다면 수정되는 코드가 사용되는 클래스를 모두 찾아서 전부 다 수정을 해주지 않고 모듈화되어있는 곳에서 한 번만 수정을 할수 있어 유지보수에 큰 도움이 된다.
 
 그리고 부가적인 코드들을 모듈화 헀기때문에 개발자는 비즈니스 로직에 몰두할수 있게 된다.
 
+***여기서 잠깐, AOP, OOP는 둘다 특정 지향 프로그래밍인데 둘의 차이가 무엇일까?**
 
+- OOP : 비즈니스 로직의 모듈화
+  - 모듈화의 핵심 단위는 비즈니스 로직
+- AOP : 인프라 혹은 부가기능의 모듈화
+  - 각 모듈의 주 목적 외에 필요한 부가적인 기능
+
+둘의 차이는 OOP에서 조금더 생산적이고 유동적이게 개발할수있도록 공통 모듈화한 기법이 AOP라는 것이다.
 
 ## 2. 프록시 객체
 
@@ -37,6 +44,14 @@ Filter, Interceptor, AOP간의 관계는 다음에 다루도록 하겠다.
 
 https://sallykim5087.tistory.com/158
 
+**프록시(Proxy) 란**
+
+![image](https://user-images.githubusercontent.com/57162257/147550099-7d269cc0-0b0a-4475-b514-ffbc9a0fd92f.png)
+
+[출처] https://jojoldu.tistory.com/71?category=635883
+
+타겟을 감싸서 타겟의 요청을 대신 받아주는 랩핑(Wrapping)오브젝트. 호출자(클라이언트)에서 타겟을 호출하게 되면 타겟이 아닌 타겟을 감싸고 있는 프록시가 호출되어, 타겟 메소드 실행전에 선처리, 타겟 메소드 실행 후, 후처를 실행시키도록 구성되어있다.
+
 Spring AOP는 프록시 패턴이라는 디자인 패턴을 사용해서 어떤 기능을 추가하려할때 기존 코드를 수정하지않고 기능을 추가할수있다.
 
 가장 대표적인 예로 @Transactional 어노테이션이 있다. @Transactional 어노테이션을 사용함으로써 commit, rollback 관련 기능들을 데이터베이스에서 데이터를 가져올때마다 신경쓸 필요없이 @Transactional이 해당 클래스 타입의 프록시를 만들어서 반복, 중복되는 코드를 생략할수 있게 되는것이다.
@@ -45,11 +60,13 @@ Spring AOP는 프록시 패턴이라는 디자인 패턴을 사용해서 어떤 
 
 ## 3. AOP 주요개념
 
-- Aspect : 공통되는 부가적인 기능을 모듈화
-- Target : Aspect를 적용하는 곳(클래스, 매서드)
-- Advice : 실질적으로 어떤 일을 해야할 지에 대한것, 실질적인 부가기능을 담은 구현체
-- JoinPoint : Advice가 적용될 위치
-- PointCut : JoinPoint의 상세한 스펙을 정의한 것. ex) A메소드의 진입 시점에 Advice가 실행될 지점을 정함.
+- **Aspect** : 공통되는 부가적인 기능을 모듈화 한 모듈
+  - aspect는 부가될 기능을 정의한 **advice**와 advice를 어디에 적용할지를 결정하는 **pointcut**을 함께 가지고 있다.
+- **Target** : Aspect를 적용하는 곳(클래스, 매서드)
+- **Advice** : 실질적으로 어떤 일을 해야할 지에 대한것, 실질적인 부가기능을 담은 구현체
+  - advice는 aspect가 **'무엇'**을 **'언제'**할지를 정의하고 있다.
+- **JoinPoint** : Advice가 적용될 위치
+- **PointCut** : JoinPoint의 상세한 스펙을 정의한 것. ex) A메소드의 진입 시점에 Advice가 실행될 지점을 정함.
 
 
 
@@ -157,12 +174,15 @@ public class LogAspect {
 ```
 
 - 코드 성능 테스트 코드가 있는 Aspect
-  1. @Around("@annotation(LogExecutionTIme)")
+  1. **@Around("@annotation(LogExecutionTIme)")**
+     - Around == Advice
+       - LogAspect는 "무엇을" : logExecutionTime을, "언제" : LogExecutionTime 어노테이션이 사용된 메소드가 호출되기 전후에 실행된다.
      - Around 어노테이션의 value에 아까 설정했던 LogExecutionTime 어노테이션을 지정함으로써 LogExecutionTime 어노테이션이 사용되었을때의 메소드가 Aspect의 Target메소드임을 정의한다.
      - 즉, JoinPoint가 LogExecutionTime 어노테이션을 사용한 메소드가 되는것이다.
-  2. Object proceed = joinPoint.proceed()
+  2. **Object proceed = joinPoint.proceed()**
      - 타겟 메소드를 실행시킨다.
      - 타겟 메소드를 실행시키기 전과 후에 성능 코드를 작성해서 타겟 메소드가 종료되었을때 로그를 확인할 수 있다.
+     - **joinPoint의 proceed는 반드시 실행되어야한다.**
 
 ```java
 public class UserService {

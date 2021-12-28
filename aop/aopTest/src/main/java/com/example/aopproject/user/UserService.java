@@ -6,23 +6,31 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.aopproject.common.LogExecutionTime;
+import com.example.aopproject.common.SuperPerformance;
+
 import lombok.RequiredArgsConstructor;
 
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class UserService {
+public class UserService extends SuperPerformance<User> {
 	private final UserRepository userRepository;
 
+	@Override
+	public List<User> findAll() {
+		return userRepository.findAll();
+	}
+
 	@LogExecutionTime
-	public void createUser(String name) {
+	public void createUser(NewUserDto newUserDto) {
 		User newUser = User.builder()
-			.name(name)
+			.email(newUserDto.getEmail())
+			.name(newUserDto.getName())
 			.build();
 
 		userRepository.save(newUser);
 	}
-
 	@LogExecutionTime
 	public String allUser(){
 		List<User> userList = userRepository.findAll();
@@ -32,4 +40,5 @@ public class UserService {
 
 		return nameList.toString();
 	}
+
 }

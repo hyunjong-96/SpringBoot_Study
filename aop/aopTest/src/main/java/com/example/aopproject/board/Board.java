@@ -1,4 +1,4 @@
-package com.example.aopproject.user;
+package com.example.aopproject.board;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,18 +13,18 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor
 @Entity
-public class User {
+public class Board {
 	@Id
 	@GeneratedValue
 	private Long id;
 
-	private String email;
+	private String title;
 
-	private String name;
+	private String content;
 
 	@Builder
-	public User(String email, String name){
-		this.email = email;
-		this.name = name;
+	public Board(String title, String content){
+		this.title = title;
+		this.content = content;
 	}
 }

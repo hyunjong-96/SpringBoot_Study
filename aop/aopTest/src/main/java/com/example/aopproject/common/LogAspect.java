@@ -1,4 +1,4 @@
-package com.example.aopproject.user;
+package com.example.aopproject.common;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
