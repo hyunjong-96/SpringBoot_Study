@@ -97,10 +97,25 @@ compileQuerydsl {	//4
     > 데이터베이스에 다이렉트로 연결되지 않고 JPA엔티티에 대해서 작동.
 
 - 1. Q클래스 생성 위치
+  
   2. 에디터 설정
+  
   3. 컴파일 클래스 패스에 넣음
+  
   4. 어노테이션 프로세서와 맞물려서 빌드시 생성
-
+  
+     1. 만약 재 컴파일시 기존에 생성되어있던 Q엔티티들이 삭제되지 않고 그대로 남아 있어 빌드 이슈가 생긴다면, compileQuerydsl스크립트에서 if문을 통해 기존 Q엔티티들을 삭제해주고 다시 Q엔티티들을 생성해준다. (처음 만들면 문제 없이 성공정인 빌드가 되지만 그 이후로 부터 기존 Q엔티티로 인해 빌드가 안되는경우가 있음!)
+  
+        ```
+        compileQuerydsl {
+        	options.annotationProcessorPath = configurations.querydsl
+        	if(file(querydslDir).exists())
+        		delete(file(querydslDir))
+        }
+        ```
+  
+        
+  
 - Q클래스는 반드시 ignore해줘야한다.
   ![image](https://user-images.githubusercontent.com/57162257/121834447-c9dc7480-cd09-11eb-8be8-f1ec692d6be0.png)
   사진에서는 src/main/generated에 Q클래스를 생성해서 ignore에 저렇게 설정해준것. 
@@ -307,4 +322,5 @@ public class MemberService{
 - https://velog.io/@conatuseus/2019-12-06-2212-%EC%9E%91%EC%84%B1%EB%90%A8-1sk3u75zo9
 - https://joont92.github.io/jpa/QueryDSL/
 - https://shinsunyoung.tistory.com/56
+- https://dev-coco.tistory.com/89
 
