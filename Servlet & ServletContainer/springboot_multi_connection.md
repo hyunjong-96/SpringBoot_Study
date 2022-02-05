@@ -94,11 +94,19 @@ BIO Connector는 Java의 기본적인 I/O기술을 사용한다.
 
 NIO Connector는 `Poller`라는 별도의 스레드가 connection을 처리하는데, 새로운 스레드를 바로 할당하지 않고 Poller가 socket connection을 캐시로 들고 있다가 socket에서 **data에 대한 처리가 가능한 순간에만 스레드를 할당하는 방식**을 사용해서 스레드가 idle한 상태를 최소화 시켜준다.
 
-NIO Connector에서는 acceptor에서 socket connection을 accept하면 소켓에서 `Socket Channel` 객체를 얻어서 톰캣의 `Nio Channel`에 등록한다. channel에 등록된 소켓 커넥션들 중 data처리가 가능한 소켓들은 Selector에 의해 Worker Thread Pool의 Worker Thread에 해당 소켓을 할당한다.
+NIO Connector에서는 acceptor에서 socket connection을 accept하면 소켓에서 `Socket Channel` 객체를 얻어서 톰캣의 `Nio Channel`에 등록한다. channel에 등록된 소켓 커넥션들 중 data처리가 가능한 소켓들은 Selector에 의해 스레드에 해당 소켓을 할당한다.
 
 Poller에서는 Max Connection까지 연결을 수락하고, Selector를 통해 등록된 채널들을 관리하기 때문에 작업큐에 상관없이 `connection refused` 오류를 반환하지 않고 클라이언트 요청을 받아 들인다.
 
 <img src="https://user-images.githubusercontent.com/57162257/152546227-db69f071-dc21-4c66-9e34-56a4fbf98be1.png" alt="image" style="zoom:50%;" />
+
+<u>참고로 Tomcat 8.0버전부터 BIO Connector가 아닌 NIO Connector가 default connector가 되었고 8.5버전부터는 BIO Connector는 deprecate 되었다.</u>
+
+이로써 클라이언트와 서블릿 컨테이너 간의 커뮤니케이션은 non-blocking에 적용되었다. 하지만 서블릿 컨테이너에서 서블릿에서의 request processing이 완료될때까지 기다리기 때문에 여전히 block인 상태이다.
+
+서블릿 컨테이너와 서블릿간의 async/ non-blocking은 추후에 정리하겠다.
+
+
 
 
 
