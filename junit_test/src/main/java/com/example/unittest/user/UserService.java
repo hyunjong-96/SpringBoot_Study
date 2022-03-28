@@ -1,6 +1,7 @@
 package com.example.unittest.user;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,5 +31,17 @@ public class UserService {
 		for (int i = 0; i < 5; i++) {
 			userRepository.save(userDto.toEntity());
 		}
+	}
+
+	public UserDto getUserInfo(Long userId) {
+		User findUser = userRepository.findById(userId)
+			.orElseThrow(()->new NoSuchElementException(userId+"를 찾을수 없습니다"));
+		return UserDto.builder().name(findUser.getName()).age(findUser.getAge()).role(findUser.getRole()).build();
+	}
+
+	@Transactional
+	public UserDto saveUser(UserDto userDto) {
+		User user = userRepository.save(userDto.toEntity());
+		return new UserDto(user.getName(), user.getAge(), user.getRole());
 	}
 }

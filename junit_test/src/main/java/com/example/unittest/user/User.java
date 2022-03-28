@@ -13,9 +13,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class User {
@@ -29,4 +30,11 @@ public class User {
 	private Integer age;
 
 	private Role role;
+
+	public User(Long id, String name, Integer age, Role role){
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.role = role;
+	}
 }
