@@ -2,6 +2,7 @@ package com.example.unittest.user;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,7 +21,7 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/transaction-test")
-	public void test(UserDto userDto){
+	public void testTransaction(UserDto userDto){
 		userService.repetitionUserSave(userDto);
 	}
 
@@ -28,6 +29,11 @@ public class UserController {
 	public ResponseEntity<UserDto> saveUser(@RequestBody UserDto userDto){
 		UserDto result = userService.saveUser(userDto);
 		return ResponseEntity.ok().body(result);
+	}
+
+	@PostMapping("/model-attribute")
+	public ResponseEntity<Void> test(@ModelAttribute UserDto userDto){
+		return ResponseEntity.ok().build();
 	}
 
 	@GetMapping("/{userId}")
