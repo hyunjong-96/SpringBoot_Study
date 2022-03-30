@@ -1,6 +1,7 @@
 package com.example.unittest.test;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,10 +19,10 @@ public class TestController {
 		return ResponseEntity.ok().body(requestBodyDto);
 	}
 
-	// @PostMapping
-	// public ResponseEntity<RequestBodyDto> modelAttributeTest(
-	// 	@ModelAttribute Re
-	// ){
-	//
-	// }
+	@PostMapping("/modelattribute")
+	public ResponseEntity<ModelAttributeDto> modelAttributeTest(
+		@ModelAttribute ModelAttributeDto modelAttributeDto
+	){
+		return ResponseEntity.ok().body(modelAttributeDto);
+	}
 }

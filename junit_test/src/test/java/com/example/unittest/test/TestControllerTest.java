@@ -2,6 +2,7 @@ package com.example.unittest.test;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +39,32 @@ class TestControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("name").value(name))
 			.andExpect(jsonPath("age").value(age))
-			.andExpect(jsonPath("email").value(email));
+			.andExpect(jsonPath("email").value(email))
+			.andDo(print());
+	}
+
+	@Test
+	void modelAttributeTest() throws Exception {
+		String name = "테스터";
+		String age = "27";
+		String password = "123123";
+		String email = "test@test.com";
+		ModelAttributeDto modelAttributeDto =
+			new ModelAttributeDto(name, 27, password, email);
+		mvc
+			.perform(post("/api/test/modelattribute")
+				.contentType(MediaType.MULTIPART_FORM_DATA)
+				.flashAttr("modelAttributeDto", modelAttributeDto)
+				// .param("name",name)
+				// .param("age", age)
+				// .param("password", password)
+				// .param("email", email)
+			)
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("name").value(name))
+			.andExpect(jsonPath("age").value(age))
+			.andExpect(jsonPath("password").value(password))
+			.andExpect(jsonPath("email").value(email))
+			.andDo(print());
 	}
 }
